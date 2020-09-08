@@ -1,0 +1,78 @@
+# Created by https://www.toptal.com/developers/gitignore/api/eclipse
+# Edit at https://www.toptal.com/developers/gitignore?templates=eclipse
+# .gitignore 작성 후에도 반영이 되지 않는 경우(git의 cache 역활 때문에 발생하는 현상)
+# git bash => 해당 프로젝트로 이동
+# git rm -r --cached 
+# git add . && git commit -m "cache removed" && git push
+
+### Eclipse ###
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+
+.classpath
+.settings/
+.project
+target/
+/classes/
+/test-classes/
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
+
+# CDT-specific (C/C++ Development Tooling)
+.cproject
+
+# CDT- autotools
+.autotools
+
+# Java annotation processor (APT)
+.factorypath
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# Tern plugin
+.tern-project
+
+# TeXlipse plugin
+.texlipse
+
+# Code Recommenders
+.recommenders/
+
+# Annotation Processing
+.apt_generated/
+.apt_generated_test/
+
+# Scala IDE specific (Scala & Java development for Eclipse)
+.cache-main
+.scala_dependencies
+.worksheet
+
+
+
+### Eclipse Patch ###
+# Spring Boot Tooling
+.sts4-cache/
+
+# End of https://www.toptal.com/developers/gitignore/api/eclipse
