@@ -34,7 +34,7 @@
     	<!-- 세션 관련 설정, max-sessions="1" 동시접속막기, expired-url="/auth/login" 세션 만료시 이동할 주소, -->
      	<session-management>
    			<concurrency-control max-sessions="1"
-            	                           expired-url="/security/auth/login"
+            	                           expired-url="/auth/login"
                 	              		   error-if-maximum-exceeded="true" />
     	</session-management>
     	
@@ -44,7 +44,7 @@
     <beans:bean id="userLoginSuccessHandler" class="com.sample.security.authentication.UserLoginSuccessHandler" />
     <beans:bean id="userLoginFailureHandler" class="com.sample.security.authentication.UserLoginFailureHandler" />
     <!-- 로그인 인증을 처리하는 빈 -->
-      <beans:bean id="userService" class="com.sample.security.authentication.UserAuthenticationService"/>
+    <beans:bean class="com.sample.security.authentication.UserAuthenticationService"/>
     <!-- 비밀번호 암호화를 위한 빈 -->
      <beans:bean id="bcryptPasswordEncoder" 
     	class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
