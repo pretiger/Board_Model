@@ -18,7 +18,7 @@ public interface BoardDAO {
 	public int count();
 	public BoardDTO detail(int num);
 //	public List<BoardDTO> list(Map<String, Object> map);
-	public List<BoardDTO> list();
+	public List<BoardDTO> list(Map<String, Object> map);
 	public void plusSubstep(BoardDTO board);
 	public void insertReply(BoardDTO board);
 	public void insertBoard(BoardDTO board);

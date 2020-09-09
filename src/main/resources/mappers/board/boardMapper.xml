@@ -48,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="list" resultType="com.sample.security.model.BoardDTO">
 		select num,writer,subject,content,subgroup,substep,sublevel,viewcount
 		from java.board_spring
-		order by num desc limit 0, 10
+		order by subgroup desc, substep asc limit ${start}, #{end}
 	</select>
 	
 	<update id="plusSubstep">

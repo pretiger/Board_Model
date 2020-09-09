@@ -1,56 +1,51 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../include/layout/header.jsp"%>
-<!-- 이상한 -->
-<!-- 정상인 -->
+
 <div class="container">
 	<div class="form-group">
-		<label for="username">Username:</label> <input type="text" class="form-control" id="username">
+		<label for="subject">Title:</label> 
+		<input type="text" class="form-control" id="subject">
+		<input type="hidden" id="writer" value="${principal.user.username}">
 	</div>
 	<div class="form-group">
-		<label for="password">Password:</label> <input type="password" class="form-control" id="password">
-	</div>
-	<div class="form-group">
-		<label for="email">Email:</label> <input type="email" class="form-control" id="email">
-	</div>
-	<div class="form-group">
-		<label for="role">Role list:</label> <select class="form-control" id="role">
-			<option value="ROLE_USER" selected>User</option>
-			<option value="ROLE_GUEST">Guest</option>
-			<option value="ROLE_ADMIN">Admin</option>
-		</select>
+		<label for="content">Content:</label> 
+		<textarea rows="1" cols=""class="form-control summernote" id="content"></textarea>
 	</div>
 	<button id="btn-save" class="btn btn-primary">Save</button>
 </div>
 
 <script>
+$(".summernote").summernote({
+	tabsize: 2,
+	height: 300
+});
+
 $(function(){
 	const header = $("meta[name='_csrf_header']").attr("content");
 	const token = $("meta[name='_csrf']").attr("content");
 	
 	$("#btn-save").click(function(){
-		console.log("Save clicked");
 		const data = {
-			username: $("#username").val(),
-			password: $("#password").val(),
-			email: $("#email").val(),
-			role: $("#role").val()
-		}
+			writer: $("#writer").val(),
+			subject: $("#subject").val(),
+			content: $("#content").val()
+		};
 		console.log(data);
- 		$.ajax({
+		$.ajax({
 			type: "post",
-			url: "${path}/auth/insert",
+			url: "${path}/board/insert",
 			beforeSend : function(xhr) {
 				xhr.setRequestHeader(header, token);
 			},
+			data: JSON.stringify(data),
 			contentType: "application/json;charset=utf-8",
 			dataType: "json",
-			data: JSON.stringify(data),
 			success: function(result){
-				console.log(result);
 				if(result.status === 200){
+					alert("insert success!");
 					location.href="${path}";
 				}else{
-					console.log("user insert fail!");
+					alert("Error!");
 				}
 			},
 			error: function(error){

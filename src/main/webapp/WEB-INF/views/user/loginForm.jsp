@@ -1,8 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../include/layout/header.jsp"%>
-<!-- 로그인주석추가1 -->
-<!-- 로그인주석추가2 -->
-<!-- 로그인주석추가3 -->
+
 <div class="container">
 	<div class="form-group">
 		<label for="username">Username:</label> <input type="text" class="form-control" id="username">
@@ -19,25 +17,27 @@ $(function(){
 	const token = $("meta[name='_csrf']").attr("content");
 	
 	$("#btn-login").click(function(){
-		console.log("Login clicked");
 		const data = {
 			username: $("#username").val(),
 			password: $("#password").val()
-		}
-		console.log(data);
+		};
+ 
 		$.ajax({
 			type: "post",
 			url: "${path}/auth/login",
 			beforeSend : function(xhr) {
 				xhr.setRequestHeader(header, token);
 			},
-			data: data,
+			data: data,  /* login process에서 post로 전송시 data는 json type로 변환하면 서버에서 인식하지 못한다. */
 			success: function(result){
-				console.log(result);
-				if(result === ""){
-					/* location.href="/"; */
-					console.log("login success!");
+				if(result.status === 200){
+					location.href="${path}";
+					console.log(result);
 				}else{
+					alert(result.data);
+					$("#username").val("");
+					$("#password").val("");
+					$("#username").focus();
 					console.log(result);
 				}
 			},

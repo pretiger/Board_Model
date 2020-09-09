@@ -9,7 +9,7 @@
 			<a href="#" class="btn btn-danger">Delete</a>
 			<a href="#" class="btn btn-success">Reply</a>
 			<p>number:&nbsp;<i>${dto.num}</i>&nbsp;&nbsp;writer:&nbsp;<i>${dto.writer}</i></p>
-			<h4 class="card-title">${dto.subject}</h4>
+			<h2 class="card-title">${dto.subject}</h2>
 			<p class="card-text">${dto.content}</p>
 		</div>
 	</div>

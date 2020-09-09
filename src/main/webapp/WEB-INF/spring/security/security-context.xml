@@ -24,12 +24,12 @@
     	<intercept-url pattern="/auth/**" access="permitAll" />
     	<!-- 로그인한 사용자 영역 -->
     	<intercept-url pattern="/**" 
-    		access="hasAnyRole('ROLE_USER', 'ROLE_TEST', 'ROLE_ADMIN', 'ROLE_GUEST')" />
+    		access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_GUEST')" />
     	<!-- 로그인 폼 -->
     	<form-login login-page="/auth/loginForm"
                         login-processing-url="/auth/login"
-                        authentication-success-handler-ref="userLoginSuccessHandler"
-                        authentication-failure-handler-ref="userLoginFailureHandler"
+                        authentication-success-handler-ref="loginSuccessHandler"
+                        authentication-failure-handler-ref="loginFailureHandler"
                         username-parameter="username" password-parameter="password" />
     	<!-- 세션 관련 설정, max-sessions="1" 동시접속막기, expired-url="/auth/login" 세션 만료시 이동할 주소, -->
      	<session-management>
@@ -41,12 +41,11 @@
     	<access-denied-handler ref="userDeniedHandler" />
     </http>
     <beans:bean id="userDeniedHandler" class="com.sample.security.authentication.UserDeniedHandler" />
-    <beans:bean id="userLoginSuccessHandler" class="com.sample.security.authentication.UserLoginSuccessHandler" />
-    <beans:bean id="userLoginFailureHandler" class="com.sample.security.authentication.UserLoginFailureHandler" />
+    <beans:bean id="loginSuccessHandler" class="com.sample.security.authentication.LoginSuccessHandler" />
+    <beans:bean id="loginFailureHandler" class="com.sample.security.authentication.LoginFailureHandler" />
     <!-- 로그인 인증을 처리하는 빈 -->
-    <beans:bean class="com.sample.security.authentication.UserAuthenticationService"/>
+    <beans:bean class="com.sample.security.authentication.PrincipalDetailService"/>
     <!-- 비밀번호 암호화를 위한 빈 -->
-     <beans:bean id="bcryptPasswordEncoder" 
-    	class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+    <beans:bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
 </beans:beans>

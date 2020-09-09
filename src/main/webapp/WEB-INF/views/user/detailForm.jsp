@@ -4,22 +4,39 @@
 <!-- 정상인 -->
 <div class="container">
 	<div class="form-group">
-		<label for="username">Username:</label> <input type="text" class="form-control" id="username">
+		<label for="username">Username:</label> 
+		<input type="text" class="form-control" id="username" readonly value="${dto.username}">
 	</div>
 	<div class="form-group">
-		<label for="password">Password:</label> <input type="password" class="form-control" id="password">
+		<label for="password">Password:</label> 
+		<input type="password" class="form-control" id="password">
 	</div>
 	<div class="form-group">
-		<label for="email">Email:</label> <input type="email" class="form-control" id="email">
+		<label for="email">Email:</label> 
+		<input type="email" class="form-control" id="email" value="${dto.email}">
 	</div>
 	<div class="form-group">
 		<label for="role">Role list:</label> <select class="form-control" id="role">
-			<option value="ROLE_USER" selected>User</option>
-			<option value="ROLE_GUEST">Guest</option>
-			<option value="ROLE_ADMIN">Admin</option>
+			<c:choose>
+			<c:when test="${dto.role == 'ROLE_USER'}">
+				<option value="ROLE_USER" selected>User</option>
+				<option value="ROLE_GUEST">Guest</option>
+				<option value="ROLE_ADMIN">Admin</option>
+			</c:when>
+			<c:when test="${dto.role == 'ROLE_GUEST'}">
+				<option value="ROLE_USER">User</option>
+				<option value="ROLE_GUEST" selected>Guest</option>
+				<option value="ROLE_ADMIN">Admin</option>
+			</c:when>
+			<c:otherwise>
+				<option value="ROLE_USER">User</option>
+				<option value="ROLE_GUEST">Guest</option>
+				<option value="ROLE_ADMIN" selected>Admin</option>
+			</c:otherwise>
+			</c:choose>
 		</select>
 	</div>
-	<button id="btn-save" class="btn btn-primary">Save</button>
+	<button id="btn-update" class="btn btn-primary">Update</button>
 </div>
 
 <script>
@@ -27,7 +44,7 @@ $(function(){
 	const header = $("meta[name='_csrf_header']").attr("content");
 	const token = $("meta[name='_csrf']").attr("content");
 	
-	$("#btn-save").click(function(){
+	$("#btn-update").click(function(){
 		console.log("Save clicked");
 		const data = {
 			username: $("#username").val(),
@@ -37,8 +54,8 @@ $(function(){
 		}
 		console.log(data);
  		$.ajax({
-			type: "post",
-			url: "${path}/auth/insert",
+			type: "put",
+			url: "${path}/user/update",
 			beforeSend : function(xhr) {
 				xhr.setRequestHeader(header, token);
 			},
@@ -48,9 +65,10 @@ $(function(){
 			success: function(result){
 				console.log(result);
 				if(result.status === 200){
+					alert("user update success!");
 					location.href="${path}";
 				}else{
-					console.log("user insert fail!");
+					console.log("user update fail!");
 				}
 			},
 			error: function(error){
