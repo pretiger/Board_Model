@@ -10,8 +10,8 @@ public interface BoardDAO {
 
 	public void updateCount(int num);
 	public int countReply(int bnum);
-	public void deleteReply(int rnum);
-	public List<ReplyDTO> listReply(int bnum);
+	public void deleteComment(int rnum);
+	public List<ReplyDTO> listComment(int bnum);
 	public void insertComment(ReplyDTO reply);
 	public void update(BoardDTO board);
 	public void delete(int num);

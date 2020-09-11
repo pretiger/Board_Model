@@ -1,25 +1,38 @@
 package com.sample.security.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sample.security.authentication.PrincipalDetail;
 import com.sample.security.authentication.PrincipalDetailService;
+import com.sample.security.model.KakaoProfile;
+import com.sample.security.model.OAuthToken;
 import com.sample.security.model.ResponseDTO;
 import com.sample.security.model.UserDTO;
 import com.sample.security.service.UserService;
@@ -34,6 +47,110 @@ public class UserController {
 	
 	@Autowired
 	PrincipalDetailService authService;
+	
+	@Autowired
+	@Qualifier("cacao_pwd")
+	String cacao_pwd;
+	
+	@GetMapping("/auth/kakao/callback")
+	public String kakaoCallback(String code) {
+		logger.info("kakao authentication completed : "+code);
+		
+		RestTemplate rt = new RestTemplate();
+		
+		HttpHeaders headers = new HttpHeaders();
+		
+		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		
+		String grant_type = "authorization_code";
+		String client_id = "062868188caa38399a29c76b43a4d391";
+		String redirect_uri = "http://localhost/security/auth/kakao/callback";
+		
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", grant_type);
+		params.add("client_id", client_id);
+		params.add("redirect_uri", redirect_uri);
+		params.add("code", code);
+		
+		HttpEntity<MultiValueMap<String,String>> kakaoTokenRequest = 
+			new HttpEntity<>(params, headers);
+		
+		ResponseEntity<String> response = rt.exchange(
+				"https://kauth.kakao.com/oauth/token", 
+				HttpMethod.POST, 
+				kakaoTokenRequest, 
+				String.class
+		);
+		
+//		Gson, Json, Simple, ObjectMapper
+		ObjectMapper objectMapper = new ObjectMapper();
+		OAuthToken oauthToken = null;
+		try {
+			oauthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		logger.info("response body : "+response.getBody());
+		logger.info("카카오 엑세스 토큰 : "+oauthToken.getAccess_token());
+		
+		kakaoLogin(oauthToken.getAccess_token());
+		
+		return "redirect:/";
+	}
+	
+	public void kakaoLogin(String cacao_access_token) {
+		RestTemplate rt = new RestTemplate();
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", "Bearer "+cacao_access_token);
+		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		
+		HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = 
+				new HttpEntity<>(headers);
+		
+		ResponseEntity<String> response = rt.exchange(
+				"https://kapi.kakao.com/v2/user/me",
+				HttpMethod.POST,
+				kakaoProfileRequest,
+				String.class
+		);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		KakaoProfile kakaoProfile = null;
+		try {
+			kakaoProfile = objectMapper.readValue(response.getBody(), KakaoProfile.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		logger.info("카카오 아이디(번호) : "+kakaoProfile.getId());
+		logger.info("카카오 이메일 : "+kakaoProfile.getKakao_account().getEmail());
+		logger.info("블로그 서버 유저네임 : "+kakaoProfile.getKakao_account().getEmail()+"_"+kakaoProfile.getId());
+		logger.info("블로그 서버 이메일 : "+kakaoProfile.getKakao_account().getEmail());
+		logger.info("블로그 서버 패스워드 : "+ cacao_pwd);
+		
+		UserDTO kakaoUser = UserDTO.builder()
+				.username(kakaoProfile.getKakao_account().getEmail()+"_"+kakaoProfile.getId())
+				.password(cacao_pwd)
+				.email(kakaoProfile.getKakao_account().getEmail())
+				.oauth("kakao")
+				.role("ROLE_USER")
+				.build();
+
+//		가입자 혹은 비가입자 체크처리
+		UserDTO dbUser = userService.login(kakaoUser.getUsername());
+		
+		if(dbUser == null) {
+			logger.info("기존 회원이 아니기에 자동 회원가입을 진행합니다........................!");
+			userService.insert(kakaoUser);
+		}
+		
+		logger.info("자동 로그인을 진행합니다..........!");
+//		로그인 및 세션 처리
+		UserDetails principal = authService.loadUserByUsername(kakaoUser.getUsername());
+		Authentication authentication = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+	}
 	
 	@ResponseBody
 	@PutMapping("/user/update")

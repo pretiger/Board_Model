@@ -9,6 +9,7 @@
 		<label for="password">Password:</label> <input type="password" class="form-control" id="password">
 	</div>
 	<button id="btn-login" class="btn btn-primary">Login</button>
+	<a id="btn-kakao" href="https://kauth.kakao.com/oauth/authorize?client_id=062868188caa38399a29c76b43a4d391&redirect_uri=http://localhost/security/auth/kakao/callback&response_type=code"><img height="38px" src ="../include/image/kakao_login.png" /></a>
 </div>
 
 <script>

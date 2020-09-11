@@ -18,7 +18,15 @@
 				<tr align="center">
 					<td>${list.num}</td>
 					<td>${list.writer}</td>
-					<td align="left"><a href="${path}/detailForm/${list.num}">${list.subject}</a></td>
+					<td align="left">
+						<a href="${path}/detailForm/${list.num}"> 
+							<c:if test="${list.sublevel > 0}">
+								<c:forEach begin="1" end="${list.sublevel}">&nbsp;&nbsp;</c:forEach>
+							</c:if> 
+							${list.subject}
+							<c:if test="${list.count > 0}"><span style="color: red;">[${list.count}]</span></c:if>
+						</a>
+					</td>
 					<td>${list.viewcount}</td>
 					<td><fmt:formatDate value="${list.regdate}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 				</tr>
@@ -54,10 +62,10 @@
 </div>
 
 <script>
-function list(page) {
-	/* location.href = "${path}/auth/list?curPage=" + page; */
-	location.href = "${path}?curPage=" + page;
-}
+	function list(page) {
+		/* location.href = "${path}/auth/list?curPage=" + page; */
+		location.href = "${path}?curPage=" + page;
+	}
 </script>
 
 <%@ include file="include/layout/footer.jsp"%>
