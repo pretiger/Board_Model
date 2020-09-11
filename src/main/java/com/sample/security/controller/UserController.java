@@ -82,6 +82,8 @@ public class UserController {
 				String.class
 		);
 		
+		logger.info("============= response body content : "+response.getBody());
+		
 //		Gson, Json, Simple, ObjectMapper
 		ObjectMapper objectMapper = new ObjectMapper();
 		OAuthToken oauthToken = null;
