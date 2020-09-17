@@ -52,6 +52,12 @@ public class UserController {
 	@Qualifier("cacao_pwd")
 	String cacao_pwd;
 	
+	@GetMapping("/admin/managed")
+	public String managed(Model model) {
+		model.addAttribute("message", "Admin Managed Form");
+		return "user/managedForm";
+	}
+	
 	@GetMapping("/auth/kakao/callback")
 	public String kakaoCallback(String code) {
 		logger.info("kakao authentication completed : "+code);

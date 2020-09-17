@@ -23,6 +23,11 @@ public class BoardService {
 	@Autowired
 	HttpSession session;
 	
+	@Transactional(readOnly = true)
+	public String preview(int num) {
+		return boardDao.preview(num);
+	}
+	
 	@Transactional
 	public void deleteComment(int rnum) {
 		boardDao.deleteComment(rnum);

@@ -8,6 +8,7 @@ import com.sample.security.model.ReplyDTO;
 
 public interface BoardDAO {
 
+	public String preview(int num);
 	public void updateCount(int num);
 	public int countReply(int bnum);
 	public void deleteComment(int rnum);

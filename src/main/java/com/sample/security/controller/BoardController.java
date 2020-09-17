@@ -30,6 +30,12 @@ public class BoardController {
 	BoardService boardService;
 	
 	@ResponseBody
+	@GetMapping("/auth/preview/{num}")
+	public String preview(@PathVariable int num) {
+		return boardService.preview(num);
+	}
+	
+	@ResponseBody
 	@DeleteMapping("/comment/{rnum}")
 	public ResponseDTO<String> deleteComment(@PathVariable int rnum) {
 		boardService.deleteComment(rnum);
